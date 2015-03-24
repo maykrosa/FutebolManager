@@ -18,7 +18,7 @@ public class Copa extends GenericoCompeticao{
 	 * enum Turno, constantes que determinam a que turno a partida pertence
 	 */
 	public enum Turno {
-		primeiraRodada(0), oitavas(1), quartas(2), semi(3), finall(4);
+		primeiraRodada(0), segundaRodada(1), oitavas(2), quartas(3), semi(4), finall(5);
 
 		private int id;
 
@@ -51,15 +51,24 @@ public class Copa extends GenericoCompeticao{
 	 * @param Confederacao confederacao
 	 */
 	public Copa(Confederacao confederacao){
-		this.confederacao = confederacao;		
-		NUMERO_DE_PARTICIPANTES = 32;
-		int[]tempDEJ = {27, 29, 37, 39, 51, 53, 63, 65, 77, 79};
+		this.confederacao = confederacao;	
+		
+		/* A quantidade de participantes na copa pode ser de 64, 32 ou 16 times */
+		if(confederacao.times.size() >= 64)
+			NUMERO_DE_PARTICIPANTES = 64;
+		else if(confederacao.times.size() >= 32)
+			NUMERO_DE_PARTICIPANTES = 32;
+		else if(confederacao.times.size() >= 16)
+			NUMERO_DE_PARTICIPANTES = 16;
+		
+		int[]tempDEJ = {15, 17, 23, 25, 27, 29, 37, 39, 51, 53, 63, 65};
 		DIAS_DE_JOGOS = tempDEJ;
 		
 		/** Dias chaves são apenas os dias onde as partidas de volta acontecem */
 		for(int i=0; i<DIAS_DE_JOGOS.length; i++){
-			if(i%2 != 0)
+			if(i%2 != 0){
 				diasChaves.add(DIAS_DE_JOGOS[i]);
+			}
 		}
 	}
 	
@@ -78,27 +87,34 @@ public class Copa extends GenericoCompeticao{
 		jogos.add(new ArrayList<ConfrontoIdaVolta>());
 		jogos.add(new ArrayList<ConfrontoIdaVolta>());
 		jogos.add(new ArrayList<ConfrontoIdaVolta>());
-		
+		jogos.add(new ArrayList<ConfrontoIdaVolta>());
+
 		ArrayList<Integer> jaEscolhidos = new ArrayList<Integer>();
 		int t1;
 		int t2;
 		
+		if(confederacao.times.size() >= 64)
+			rodadaAtual = Turno.primeiraRodada.getId();
+		else if(confederacao.times.size() >= 32)
+			rodadaAtual = Turno.segundaRodada.getId();
+		else if(confederacao.times.size() >= 16)
+			rodadaAtual = Turno.oitavas.getId();
+		
 		for(int i=0; i<NUMERO_DE_PARTICIPANTES/2; i++){
-			t1 = ConteudoEstatico.random.nextInt(16);
-			t2 = ConteudoEstatico.random.nextInt(16)+16;
+			t1 = ConteudoEstatico.random.nextInt(NUMERO_DE_PARTICIPANTES/2);
+			t2 = ConteudoEstatico.random.nextInt(NUMERO_DE_PARTICIPANTES/2)+NUMERO_DE_PARTICIPANTES/2;
 			while(jaEscolhidos.contains(t1) || jaEscolhidos.contains(t2)){
-				t1 = ConteudoEstatico.random.nextInt(16);
-				t2 = ConteudoEstatico.random.nextInt(16)+16;
+				t1 = ConteudoEstatico.random.nextInt(NUMERO_DE_PARTICIPANTES/2);
+				t2 = ConteudoEstatico.random.nextInt(NUMERO_DE_PARTICIPANTES/2)+NUMERO_DE_PARTICIPANTES/2;
 			}
 			
 			jaEscolhidos.add(t1);
 			jaEscolhidos.add(t2);
 			
-			jogos.get(Turno.primeiraRodada.getId()).add(new ConfrontoIdaVolta(confederacao.times.get(t1), confederacao.times.get(t1), Turno.primeiraRodada.getId(), this));
+			jogos.get(rodadaAtual).add(new ConfrontoIdaVolta(confederacao.times.get(t1), confederacao.times.get(t2), rodadaAtual, this));
 		}
 		
-		rodadaAtual = Turno.primeiraRodada.getId();
-		System.out.println(jogos.get(0).size()+" jogos da primeira fase");
+		System.out.println(jogos.get(rodadaAtual).size()+" jogos da primeira fase");
 	}
 	
 	/**
@@ -110,14 +126,13 @@ public class Copa extends GenericoCompeticao{
 	public void atualizar(int semana){
 		ArrayList<Time> proximafase = new ArrayList<Time>();
 		int i = diasChaves.indexOf(semana);
-		if(i == -1)
+		if(i < rodadaAtual)
 			return;
 		
 		for(int j=0; j<jogos.get(i).size(); j++){
 			ConfrontoIdaVolta confIV = jogos.get(i).get(j);
-
 			if(confIV.turno < Turno.finall.getId()){
-				proximafase.add(confIV.getVencedor());
+				proximafase.add(confIV.vencedor);
 
 				confIV.encerrado = true;
 			}
@@ -129,7 +144,12 @@ public class Copa extends GenericoCompeticao{
 		}
 				
 		rodadaAtual++;
-		System.out.println("avançaram: "+proximafase.size());
+		System.out.println("avançaram: "+proximafase.size()+"\n");
+	}
+	
+	@Override
+	public void fimTemporada() {
+		
 	}
 
 	@Override

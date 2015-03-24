@@ -20,6 +20,8 @@ public class Campeonato extends GenericoCompeticao {
 
 	public int turnoAtual;
 	public boolean campeonatoFinish = false;
+	
+	public int serie;
 
 	/**
 	 * Classe responsável pelo campeonato nacional de acordo com a confederacao
@@ -29,8 +31,10 @@ public class Campeonato extends GenericoCompeticao {
 	 *            confederacao
 	 * 
 	 * */
-	public Campeonato(Confederacao confederacao) {
+	public Campeonato(Confederacao confederacao, int serie) {
 		this.confederacao = confederacao;
+		this.serie = serie;
+		
 		NUMERO_DE_PARTICIPANTES = 20;
 		pontuacao = new ArrayList<Integer>();
 		int[] jog = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30,
@@ -44,7 +48,12 @@ public class Campeonato extends GenericoCompeticao {
 //		ArrayList<ArrayList<Confronto>> tabela = new ArrayList<ArrayList<Confronto>>();
 //		ArrayList<Confronto> rodada = new ArrayList<Campeonato.Confronto>();
 		ArrayList<Integer> clubes = new ArrayList<Integer>();
-		times = confederacao.times;
+		
+		times = new ArrayList<Time>();
+		for(int i=0; i<20; i++)
+			times.add(confederacao.times.get((serie*NUMERO_DE_PARTICIPANTES)+i));
+		
+		
 		for (int i = 0; i < NUMERO_DE_PARTICIPANTES; i++) {
 			clubes.add(i);
 		}
@@ -90,18 +99,20 @@ public class Campeonato extends GenericoCompeticao {
 
 	public void atualizar(int semana) {}
 
-	public void resultados(boolean finish) {
+	@Override
+	public void fimTemporada() {
 		try {
-			ordenarLista(confederacao.times);
+			ordenarLista(times);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 		for (int i = 0; i < NUMERO_DE_PARTICIPANTES; i++) {
-			System.out.println(confederacao.times.get(i).nome + " = "
-					+ confederacao.times.get(i).pontos);
-
+			System.out.println(times.get(i).nome + " = " + times.get(i).pontos);
+			times.get(i).nivel = (NUMERO_DE_PARTICIPANTES*serie)+i;
 		}
-		System.out.println("Campeao Brasileiro - " + confederacao.times.get(0));
+		
+		System.out.println("Campeao Brasileiro - " + times.get(0));
 	}
 	
 	/**

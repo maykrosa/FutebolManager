@@ -19,7 +19,7 @@ public class ConfrontoIdaVolta{
 	
 	public Copa copa;
 	
-	private Time vencedor;
+	public Time vencedor;
 	
 	public ConfrontoIdaVolta(Time t1, Time t2, int turno, Copa copa){
 		this.t1 = t1;
@@ -27,7 +27,7 @@ public class ConfrontoIdaVolta{
 		
 		this.turno = turno;
 		this.encerrado = false;
-		this.vencedor = null;
+		vencedor = null;
 		
 		this.copa = copa;
 
@@ -38,15 +38,26 @@ public class ConfrontoIdaVolta{
 		t2.calendario.setJogo(copa.DIAS_DE_JOGOS[turno*2 +1], t2, t1, copa, this);
 	}
 	
-	public void setVencedor(Time t){
-		vencedor = t;
-	}
-	
-	public Time getVencedor(){
-		if(vencedor == null){
-			return t1;
-		}
-		return vencedor;
+	public boolean precisaPenalti(SimuladorDePartida p2){
+		SimuladorDePartida p1 = getPartida1();
+		
+		int gols1 = p1.times[0].gols + p2.times[1].gols;
+		int gols2 = p1.times[1].gols + p2.times[0].gols;
+		
+		if(gols1 > gols2)
+			return false;
+		else if(gols2 > gols1)
+			return false;
+
+		gols1 = p1.times[0].gols + (p2.times[1].gols*2);
+		gols2 = (p1.times[1].gols*2) + p2.times[0].gols;
+		
+		if(gols1 > gols2)
+			return false;
+		else if(gols2 > gols1)
+			return false;
+		
+		return true;
 	}
 	
 	public SimuladorDePartida getPartida1(){

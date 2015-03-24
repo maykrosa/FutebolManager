@@ -16,6 +16,7 @@ public abstract class GenericoCompeticao {
 	
 	public abstract void comecarTemporada();
 	public abstract void atualizar(int semana);
+	public abstract void fimTemporada();
 	
 	/**
 	 * 0 - Copa

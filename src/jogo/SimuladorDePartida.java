@@ -290,24 +290,30 @@ public class SimuladorDePartida {
 		switch (competicao.getID()) {
 		case 0:
 			ConfrontoIdaVolta confronto = ((ConfrontoIdaVolta)object);
-			if(confronto.getPartida2() == null){
+			if(confronto.getPartida1() == null){
 				break;
 			}else{
+				if(confronto.precisaPenalti(this)){
+					/* Penalti */
+					DisputaPenalti penaltis = new DisputaPenalti(this);
+					penaltis.jogar();
+					confronto.vencedor = penaltis.vencedor;
+					System.out.println("Vencedor "+confronto.vencedor);
+				}
+				
 				int golsT1;
 				int golsT2;
 				SimuladorDePartida partida1 = confronto.getPartida1();
-				SimuladorDePartida partida2 = confronto.getPartida2();
+				SimuladorDePartida partida2 = this;
 				
 				golsT1 = partida1.times[0].gols + partida2.times[1].gols;
 				golsT2 = partida1.times[1].gols + partida2.times[0].gols;
 				
 				/* Um dos times ganhou com maior numero de gols */
 				if(golsT1 > golsT2){
-					confronto.setVencedor(confronto.t1);
-					break;
+					confronto.vencedor = confronto.t1;
 				}else if(golsT2 > golsT1){
-					confronto.setVencedor(confronto.t2);
-					break;
+					confronto.vencedor = confronto.t2;
 				}
 				
 				golsT1 = partida1.times[0].gols + partida2.times[1].gols*2;
@@ -315,17 +321,10 @@ public class SimuladorDePartida {
 				
 				/* Um dos times ganhou por gols fora de casa */
 				if(golsT1 > golsT2){
-					confronto.setVencedor(confronto.t1);
-					break;
+					confronto.vencedor = confronto.t1;
 				}else if(golsT2 > golsT1){
-					confronto.setVencedor(confronto.t2);
-					break;
+					confronto.vencedor = confronto.t2;
 				}
-				
-				/* Penalti */
-				DisputaPenalti penaltis = new DisputaPenalti(this);
-				penaltis.jogar();
-				confronto.setVencedor(penaltis.getVencedor());
 			}
 			break;
 		// TODO Pontuação campeonato nacional

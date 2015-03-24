@@ -55,6 +55,7 @@ public class Time {
 	public String confederacao;
 	public int nivel;
 	public int pontos;
+	public Tecnico tecnico;
 
 	public Calendario calendario;
 
@@ -67,14 +68,15 @@ public class Time {
 	 * @param Hashtable
 	 *            <String, Jogador> plantel
 	 */
-	public Time( String name, String confederacao, int nivel,
-			Hashtable<String, Jogador> plantel) {
+	public Time( String name, String confederacao, int nivel, Hashtable<String, Jogador> plantel, String tecnicoString) {
 		this.nome = name;
 		this.confederacao = confederacao;
 		this.nivel = nivel;		
 
 		this.calendario = new Calendario();
 		this.plantel = plantel;
+		this.tecnico = new Tecnico(tecnicoString, this);
+		ConteudoEstatico.tecnicos.put(tecnicoString, tecnico);
 
 		goleiros = new ArrayList<Jogador>();
 		defensores = new ArrayList<Jogador>();
