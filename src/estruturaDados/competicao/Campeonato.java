@@ -50,8 +50,10 @@ public class Campeonato extends GenericoCompeticao {
 		ArrayList<Integer> clubes = new ArrayList<Integer>();
 		
 		times = new ArrayList<Time>();
-		for(int i=0; i<20; i++)
+		for(int i=0; i<20; i++){
 			times.add(confederacao.times.get((serie*NUMERO_DE_PARTICIPANTES)+i));
+			confederacao.times.get((serie*NUMERO_DE_PARTICIPANTES)+i).dadosCompeticoes.put(getID(), new DadosCompeticao());
+		}
 		
 		
 		for (int i = 0; i < NUMERO_DE_PARTICIPANTES; i++) {
@@ -107,8 +109,10 @@ public class Campeonato extends GenericoCompeticao {
 			e.printStackTrace();
 		}
 		
+		System.out.println();
 		for (int i = 0; i < NUMERO_DE_PARTICIPANTES; i++) {
-			System.out.println(times.get(i).nome + " = " + times.get(i).pontos);
+			System.out.println(times.get(i).nome + " = " + times.get(i).dadosCompeticoes.get(getID()).pontos+" "+
+					times.get(i).dadosCompeticoes.get(getID()).golsPro+" "+times.get(i).dadosCompeticoes.get(getID()).golsContra);
 			times.get(i).nivel = (NUMERO_DE_PARTICIPANTES*serie)+i;
 		}
 		
@@ -125,10 +129,32 @@ public class Campeonato extends GenericoCompeticao {
 		Collections.sort(j, new Comparator<Time>() {
 			@Override
 			public int compare(Time s1, Time s2) {
-				if (s1.pontos > s2.pontos) {
+				if (s1.dadosCompeticoes.get(getID()).pontos > s2.dadosCompeticoes.get(getID()).pontos) {
 					return -1;
-				} else {
+				} else if(s1.dadosCompeticoes.get(getID()).pontos < s2.dadosCompeticoes.get(getID()).pontos){
 					return 1;
+				} else {
+					/* Vitorias */
+					if (s1.dadosCompeticoes.get(getID()).vitorias > s2.dadosCompeticoes.get(getID()).vitorias) 
+						return -1;
+					else if (s1.dadosCompeticoes.get(getID()).vitorias < s2.dadosCompeticoes.get(getID()).vitorias) 
+						return 1;
+					
+					/* Saldo de gols */
+					if ((s1.dadosCompeticoes.get(getID()).golsPro -  s1.dadosCompeticoes.get(getID()).golsContra) > 
+						(s2.dadosCompeticoes.get(getID()).golsPro - s2.dadosCompeticoes.get(getID()).golsContra))
+						return -1;
+					else if ((s1.dadosCompeticoes.get(getID()).golsPro -  s1.dadosCompeticoes.get(getID()).golsContra) <
+					(s2.dadosCompeticoes.get(getID()).golsPro - s2.dadosCompeticoes.get(getID()).golsContra))
+						return 1;
+					
+					/* Gols Pro */
+					if (s1.dadosCompeticoes.get(getID()).golsPro > s2.dadosCompeticoes.get(getID()).golsPro) 
+						return -1;
+					else if (s1.dadosCompeticoes.get(getID()).golsPro < s2.dadosCompeticoes.get(getID()).golsPro) 
+						return 1;
+					
+					return 0;
 				}
 			}
 		});

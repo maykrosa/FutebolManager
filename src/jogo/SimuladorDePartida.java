@@ -289,6 +289,16 @@ public class SimuladorDePartida {
 	private void fimDeJogoEvento(){
 		switch (competicao.getID()) {
 		case 0:
+			times[0].time.dadosCompeticoes.get(0).golsPro += times[0].gols;
+			times[0].time.dadosCompeticoes.get(0).golsContra += times[1].gols;
+			times[0].time.dadosCompeticoes.get(0).cartoesAmarelo += times[0].cartoesAmarelo;
+			times[0].time.dadosCompeticoes.get(0).cartoesVermelho+= times[0].cartoesVermelho;
+			
+			times[1].time.dadosCompeticoes.get(0).golsPro += times[1].gols;
+			times[1].time.dadosCompeticoes.get(0).golsContra += times[0].gols;
+			times[1].time.dadosCompeticoes.get(0).cartoesAmarelo += times[1].cartoesAmarelo;
+			times[1].time.dadosCompeticoes.get(0).cartoesVermelho+= times[1].cartoesVermelho;
+			
 			ConfrontoIdaVolta confronto = ((ConfrontoIdaVolta)object);
 			if(confronto.getPartida1() == null){
 				break;
@@ -327,15 +337,36 @@ public class SimuladorDePartida {
 				}
 			}
 			break;
-		// TODO Pontuação campeonato nacional
 		case 1:
+			times[0].time.dadosCompeticoes.get(1).golsPro += times[0].gols;
+			times[0].time.dadosCompeticoes.get(1).golsContra += times[1].gols;
+			times[0].time.dadosCompeticoes.get(1).cartoesAmarelo += times[0].cartoesAmarelo;
+			times[0].time.dadosCompeticoes.get(1).cartoesVermelho+= times[0].cartoesVermelho;
+			
+			times[1].time.dadosCompeticoes.get(1).golsPro += times[1].gols;
+			times[1].time.dadosCompeticoes.get(1).golsContra += times[0].gols;
+			times[1].time.dadosCompeticoes.get(1).cartoesAmarelo += times[1].cartoesAmarelo;
+			times[1].time.dadosCompeticoes.get(1).cartoesVermelho+= times[1].cartoesVermelho;
+			
+			/* Empate */
 			if (times[0].gols == times[1].gols) {
-				times[0].time.pontos += 1;
-				times[1].time.pontos += 1;
+				times[0].time.dadosCompeticoes.get(1).pontos += 1;
+				times[0].time.dadosCompeticoes.get(1).empates++;
+				
+				times[1].time.dadosCompeticoes.get(1).pontos += 1;
+				times[1].time.dadosCompeticoes.get(1).empates++;
+			/* Vitoria time 0 */
 			} else if (times[0].gols > times[1].gols) {
-				times[0].time.pontos +=3;
+				times[0].time.dadosCompeticoes.get(1).pontos +=3;
+				times[0].time.dadosCompeticoes.get(1).vitorias++;
+				
+				times[0].time.dadosCompeticoes.get(1).derrotas++;
+			/* Vitoria time 1 */
 			} else {
-				times[1].time.pontos +=3;
+				times[0].time.dadosCompeticoes.get(1).derrotas++;
+				
+				times[1].time.dadosCompeticoes.get(1).pontos +=3;
+				times[1].time.dadosCompeticoes.get(1).vitorias++;
 			}
 			break;
 		}

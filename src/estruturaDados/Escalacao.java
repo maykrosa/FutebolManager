@@ -22,8 +22,8 @@ public class Escalacao {
 	
 	/** Contador dos gols feitos durante a partida */
 	public int gols;
-	public int cartoesAmarelos;
-	public int cartosVermelhos;
+	public int cartoesAmarelo;
+	public int cartoesVermelho;
 	
 	private ArrayList<Jogador> jogadoresAmarelados;
 
@@ -96,7 +96,7 @@ public class Escalacao {
 	 * @param Jogador j, jogador que efetuou o gol
 	 */
 	public void amarelo(Jogador j) {
-		cartoesAmarelos++;
+		cartoesAmarelo++;
 		j.cartoesAmarelos++;
 		
 		if (jogadoresAmarelados.contains(j)) {
@@ -123,7 +123,7 @@ public class Escalacao {
 	 * @param Jogador j, jogador que efetuou o gol
 	 */
 	public void vermelho(Jogador j) {
-		cartosVermelhos++;
+		cartoesVermelho++;
 		j.cartosVermelhos++;
 		
 		/* Remover o jogador expulso da sua lista */

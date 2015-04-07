@@ -9,6 +9,7 @@ import java.util.Set;
 import jogo.ConteudoEstatico;
 import estruturaDados.Jogador.CondicaoFisica;
 import estruturaDados.Jogador.Posicao;
+import estruturaDados.competicao.DadosCompeticao;
 
 /**
  * @author Gilvanei Gregório
@@ -43,6 +44,7 @@ public class Time {
 			return this.at;
 		}
 	}
+	public Hashtable<Integer, DadosCompeticao> dadosCompeticoes;
 
 	/** Hash com todos os jogadores do plantel */
 	public Hashtable<String, Jogador> plantel;
@@ -54,7 +56,6 @@ public class Time {
 	public String nome;
 	public String confederacao;
 	public int nivel;
-	public int pontos;
 	public Tecnico tecnico;
 
 	public Calendario calendario;
@@ -72,6 +73,8 @@ public class Time {
 		this.nome = name;
 		this.confederacao = confederacao;
 		this.nivel = nivel;		
+		
+		dadosCompeticoes = new Hashtable<Integer, DadosCompeticao>();
 
 		this.calendario = new Calendario();
 		this.plantel = plantel;

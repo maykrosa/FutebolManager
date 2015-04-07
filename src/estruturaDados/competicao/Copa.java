@@ -108,6 +108,8 @@ public class Copa extends GenericoCompeticao{
 				t2 = ConteudoEstatico.random.nextInt(NUMERO_DE_PARTICIPANTES/2)+NUMERO_DE_PARTICIPANTES/2;
 			}
 			
+			confederacao.times.get(t1).dadosCompeticoes.put(getID(), new DadosCompeticao());
+			confederacao.times.get(t2).dadosCompeticoes.put(getID(), new DadosCompeticao());
 			jaEscolhidos.add(t1);
 			jaEscolhidos.add(t2);
 			

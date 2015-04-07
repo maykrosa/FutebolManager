@@ -16,7 +16,8 @@ public class Confederacao {
 	
 	public Confederacao(ArrayList<Time> times){
 		this.times = times;
-
+		ordenarTimes(times);
+			
 		campeonatos = new LinkedList<Campeonato>();
 		for(int i=0; i<times.size() / 20; i++)
 			campeonatos.add(new Campeonato(this, i));
@@ -45,11 +46,7 @@ public class Confederacao {
 		copa.fimTemporada();
 		
 		/* Promoção para a divisão de cima, ou rebaixamento para a de baixo */
-		try {
-			ordenarLista(times);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		ordenarTimes(times);
 		
 		for(int i=0; i<campeonatos.size(); i++){
 			/* Promoção */
@@ -66,14 +63,11 @@ public class Confederacao {
 			times.get((campeonatos.get(i).NUMERO_DE_PARTICIPANTES*i+campeonatos.get(i).NUMERO_DE_PARTICIPANTES-1)).nivel += 4;
 		}
 		
-		try {
-			ordenarLista(times);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		ordenarTimes(times);
 	}
 	
-	public void ordenarLista(ArrayList<Time> j) throws Exception {
+	public void ordenarTimes(ArrayList<Time> j) {
+		try{
 		Collections.sort(j, new Comparator<Time>() {
 			@Override
 			public int compare(Time s1, Time s2) {
@@ -84,5 +78,9 @@ public class Confederacao {
 				}
 			}
 		});
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
 	}
 }
