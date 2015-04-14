@@ -7,6 +7,8 @@ import java.util.Hashtable;
 import java.util.Set;
 
 import jogo.ConteudoEstatico;
+import estruturaDados.Escalacao.EstiloDeJogo;
+import estruturaDados.Escalacao.Marcacao;
 import estruturaDados.Jogador.CondicaoFisica;
 import estruturaDados.Jogador.Posicao;
 import estruturaDados.competicao.DadosCompeticao;
@@ -44,6 +46,7 @@ public class Time {
 			return this.at;
 		}
 	}
+	
 	public Hashtable<Integer, DadosCompeticao> dadosCompeticoes;
 
 	/** Hash com todos os jogadores do plantel */
@@ -93,6 +96,7 @@ public class Time {
 			p.fadiga = 100;
 			p.moral = ConteudoEstatico.random.nextInt(4) + 2;
 			p.entrosamento = ConteudoEstatico.random.nextInt(30) + 20;
+			p.recuperacaoLesao = 0;
 
 			if (p.posicao == Posicao.Goleiro.getId()) {
 				goleiros.add(p);
@@ -118,6 +122,38 @@ public class Time {
 					.println("Time Construtor - line 84 - Erro ao ordenar listas");
 		}
 
+	}
+	
+	/**
+	 * Atualizar dados do jogador para o começo da temporada
+	 */
+	public void comecarTemporada(){
+		for(String s : plantel.keySet()){
+			plantel.get(s).gols = 0;
+			plantel.get(s).cartoesAmarelos = 0;
+			plantel.get(s).cartosVermelhos = 0;
+			plantel.get(s).jogos = 0;
+		}
+	}
+	
+	/**
+	 * Atualiza as variaveis pertinentes ao time e a cada jogador como individo(moral, vadiga, entrosamento)
+	 */
+	public void atualiza(){
+		for(String s : plantel.keySet()){
+			Jogador j = plantel.get(s);
+			
+			/* Tratamento lesões */
+			if(j.recuperacaoLesao > 0){
+				j.recuperacaoLesao--;
+			}else{
+				/* Caso o jogador já esteja sarado, uma nova condição fisica é randomizada */
+				if(j.moral == CondicaoFisica.Lesionado.getId() || j.moral == CondicaoFisica.LesionadoGravemente.getId()){
+					j.moral = ConteudoEstatico.random.nextInt(4) + 2;
+				}
+			}
+			
+		}
 	}
 
 	/**
@@ -168,14 +204,13 @@ public class Time {
 	 * 
 	 * @return Escalação
 	 */
-	public Escalacao toEscalacao(Formacao f, int numSuplentes) {
+	public Escalacao toEscalacao(Formacao f, int numSuplentes, EstiloDeJogo estiloDeJogo, Marcacao marcacao) {
 		calculaCFHJogadores();
 
-		Escalacao e = new Escalacao(this);
+		Escalacao e = new Escalacao(this, estiloDeJogo, marcacao);
 
 		for (Jogador j : goleiros) {
-			if (j.moral != CondicaoFisica.Lesionado.getId()
-					&& j.moral != CondicaoFisica.LesionadoGravemente.getId())
+			if (j.moral != CondicaoFisica.Lesionado.getId()&& j.moral != CondicaoFisica.LesionadoGravemente.getId())
 				e.goleiro = j;
 
 			if (e.goleiro != null)

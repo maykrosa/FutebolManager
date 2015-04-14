@@ -1,6 +1,8 @@
 package estruturaDados;
 
 import jogo.SimuladorDePartida;
+import estruturaDados.Escalacao.EstiloDeJogo;
+import estruturaDados.Escalacao.Marcacao;
 import estruturaDados.Time.Formacao;
 import estruturaDados.competicao.GenericoCompeticao;
 
@@ -44,7 +46,8 @@ public class Calendario {
 	public void realizarJogo(int semana) {
 		DiaDeJogo dj = semanas[semana];
 		SimuladorDePartida p = new SimuladorDePartida(dj.mandante.toEscalacao(
-				Formacao.f532, 7), dj.visitante.toEscalacao(Formacao.f433, 7),
+				Formacao.f532, 7, EstiloDeJogo.ataqueTotal, Marcacao.leve), 
+				dj.visitante.toEscalacao(Formacao.f433, 7, EstiloDeJogo.equilibrado, Marcacao.Pesada),
 				dj.competicao, dj.object);
 
 		p.jogar();

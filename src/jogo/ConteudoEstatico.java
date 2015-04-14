@@ -40,7 +40,7 @@ public class ConteudoEstatico {
 				
 				subLinha = linha.split(";");
 				jogadores.put(subLinha[0],new Jogador(subLinha[0], Integer.parseInt(subLinha[1]),
-								Integer.parseInt(subLinha[2]), Integer.parseInt(subLinha[3])));
+								Integer.parseInt(subLinha[2]), Integer.parseInt(subLinha[3]), Integer.parseInt(subLinha[4]), Integer.parseInt(subLinha[5])));
 			}
 			return new Time(timeNome, confederacao, nivel, jogadores, tecnicoNome);
 		} catch (Exception e) {

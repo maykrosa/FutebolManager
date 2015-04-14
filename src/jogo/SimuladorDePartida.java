@@ -4,6 +4,7 @@ import estruturaDados.ConfrontoIdaVolta;
 import estruturaDados.DisputaPenalti;
 import estruturaDados.Escalacao;
 import estruturaDados.Jogador;
+import estruturaDados.Jogador.CondicaoFisica;
 import estruturaDados.Jogador.Posicao;
 import estruturaDados.competicao.GenericoCompeticao;
 
@@ -32,7 +33,7 @@ public class SimuladorDePartida {
 
 	public Escalacao[] times;
 	/** Minutos da partida */
-	public int time;
+	public int tempo;
 	
 	/** Posse de bola do mandante */
 	public int posseMandante = 0;
@@ -74,8 +75,26 @@ public class SimuladorDePartida {
 	 * @return boolean termino da partida
 	 */
 	public void jogar() {
-		while(time < 90){
-			time++;
+		/* Titulares jogaram */
+		times[0].goleiro.jogos++;
+		for(int i=0; i<times[0].defensores.size(); i++)
+			times[0].defensores.get(i).jogos++;
+		for(int i=0; i<times[0].meias.size(); i++)
+			times[0].meias.get(i).jogos++;
+		for(int i=0; i<times[0].atacantes.size(); i++)
+			times[0].atacantes.get(i).jogos++;
+		
+		times[1].goleiro.jogos++;
+		for(int i=0; i<times[1].defensores.size(); i++)
+			times[1].defensores.get(i).jogos++;
+		for(int i=1; i<times[1].meias.size(); i++)
+			times[1].meias.get(i).jogos++;
+		for(int i=0; i<times[1].atacantes.size(); i++)
+			times[1].atacantes.get(i).jogos++;
+
+		/* Inicio do jogo */
+		while(tempo < 90){
+			tempo++;
 
 			disputaDeBola();
 //			System.out.println("Time: "+time+" Posse: "+posseDaBola+" Setor: "+setor+" Time1: "+times[0].gols+" x Time2: "+times[1].gols);
@@ -94,6 +113,12 @@ public class SimuladorDePartida {
 		float totalSetorAdver = 0;
 		
 		int numSetor = 0;
+		
+		/** Contabilizando a posse de bola */
+		if(posseDaBola==0)
+			posseMandante++;
+		else
+			posseVisitante++;
 
 		switch (setor) {
 		case 0:
@@ -133,6 +158,18 @@ public class SimuladorDePartida {
 			return;
 		}
 		
+		/* Fator de lesão*/
+		int rndLesao = (int) (1000000f*ConteudoEstatico.random.nextFloat());
+		/* Lesão grave 0.05 porcento de chance do jogador se machucar gravemente */
+		if(rndLesao < 500f){
+			times[posseDaBola].lesao(pExecute, CondicaoFisica.LesionadoGravemente.getId());
+			return;
+		/* Lesão leve 0.5 porcento de chance do jogador se machucar gravemente */
+		}else if(rndLesao < 5000f){
+			times[posseDaBola].lesao(pExecute, CondicaoFisica.Lesionado.getId());
+			return;
+		}
+		
 		totalSetor -= pExecute.cfh;
 		/* Jogador + Bonus de importância do jogador pro setor */
 		int bonusJogValor = (int) (pExecute.cfh*((pExecute.cfh/totalSetor)*numSetor));
@@ -142,29 +179,55 @@ public class SimuladorDePartida {
 		 * caso perca a posse de bola é dada ao oponente, e uma chance de uma falta tenha 
 		 * ocorrido é randomizada*/
 		int rndNum = ConteudoEstatico.random.nextInt((int) (totalSetor+totalSetorAdver));
-		if(rndNum*1.5f <= totalSetor){
+		float fatorMarcacao = 2.5f;
+		switch (times[posseDaBola].marcacao.getId()) {
+		case 0:
+			fatorMarcacao -= 0.5f;
+			break;
+		case 1:
+			fatorMarcacao -= 0.25f;
+			break;
+		case 2:
+			fatorMarcacao -= 0.1f;
+			break;
+		}
+		switch (times[posseDaBola].estiloDeJogo.getId()) {
+		case 0:
+			fatorMarcacao -= 0.1f;
+			break;
+		case 1:
+			fatorMarcacao -= 0.25f;
+			break;
+		case 2:
+			fatorMarcacao -= 0.5f;
+			break;
+		}
+		
+		if(rndNum*fatorMarcacao <= totalSetor){
 			executaAcao(pExecute);
 		}else{
-			/* Penalti */
+			/* Penalti, quanto maior a agressividade do time defensor, maior a chance 
+			 * de um penalti ocorrer 2.5f, 5f, 7.5f */
 			if (setor == SetorCampo.Ataque.getId()) {
 				int rndPenalti = ConteudoEstatico.random.nextInt(100);
-				if(rndPenalti < 5){
+				if(rndPenalti < (times[posseDaBola==0?1:0].marcacao.getId()+1) * 2.5f){
 					penaltiEvento(pExecute);
 					return;
 				}
 			}
+			
 			int rndFalta = ConteudoEstatico.random.nextInt(100);
-			/* Jogadores do sistema defensivo tem 10 porcento de receber um cartão */
+			/* Jogadores do sistema defensivo tem 5, 10, 15 porcento de receber um cartão */
 			if(pExecute.posicao == Posicao.Zagueiro.getId() || pExecute.posicao == Posicao.Lateal.getId() 
 					|| pExecute.posicao == Posicao.Volante.getId()){
-				if(rndFalta < 10)
+				if(rndFalta < (times[posseDaBola].marcacao.getId()+1) * 5f)
 					times[posseDaBola].amarelo(pExecute);
 				else if(rndFalta == 99)
 					times[posseDaBola].vermelho(pExecute);
-			/* Jogadores do sistema ofensivo tem 5 porcento de receber um cartão */
+			/* Jogadores do sistema ofensivo tem 2.5f, 5f, 7.5f porcento de receber um cartão */
 			}else if(pExecute.posicao == Posicao.MeiaCampo.getId() || pExecute.posicao == Posicao.MeiaCampo.getId() ||
 					pExecute.posicao == Posicao.MeiaCampo.getId()){
-				if(rndFalta < 5)
+				if(rndFalta < (times[posseDaBola].marcacao.getId()+1) * 2.5f)
 					times[posseDaBola].amarelo(pExecute);
 				else if(rndFalta == 99)
 					times[posseDaBola].vermelho(pExecute);
@@ -173,12 +236,6 @@ public class SimuladorDePartida {
 			posseDaBola = posseDaBola==0?1:0;
 			setor = Math.abs(setor-3);
 		}
-		
-		/** Contabilizando a posse de bola */
-		if(posseDaBola==0)
-			posseMandante++;
-		else
-			posseVisitante++;
 	}
 
 	/**
@@ -287,6 +344,7 @@ public class SimuladorDePartida {
 	}
 	
 	private void fimDeJogoEvento(){
+		/* Referente a competição*/
 		switch (competicao.getID()) {
 		case 0:
 			times[0].time.dadosCompeticoes.get(0).golsPro += times[0].gols;

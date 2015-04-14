@@ -49,7 +49,9 @@ public class Jogador {
 	public int idade;
 	public int posicao;
 	/** Fator correspondente as habilidades */
-	public int fh;
+	public int agilidade;
+	public int forca;
+	public int resistencia;
 	/** Fator calculado correspondente as habilidades nas atuais condições do jogador*/
 	public int cfh;
 
@@ -57,6 +59,10 @@ public class Jogador {
 	public int fadiga;
 	/** Valor correspondente pelo entusiasmo */
 	public int moral;
+	
+	/** Valor correspondente as semanas restantes para recuperação da lesão */
+	public int recuperacaoLesao;
+	
 	/**
 	 * Valor correspondente pelo entrosamento, afinidade com os demais jogadores
 	 * da equipe
@@ -66,6 +72,7 @@ public class Jogador {
 	public int gols;
 	public int cartoesAmarelos;
 	public int cartosVermelhos;
+	public int jogos;
 
 	/**
 	 * Construtor da classe
@@ -75,11 +82,13 @@ public class Jogador {
 	 * @param int posição
 	 * @param int fh
 	 */
-	public Jogador(String nome, int idade, int posicao, int fh) {
+	public Jogador(String nome, int idade, int posicao, int agilidade, int forca, int resistencia) {
 		this.nome = nome;
 		this.idade = idade;
 		this.posicao = posicao;
-		this.fh = fh;
+		this.agilidade = agilidade;
+		this.forca = forca;
+		this.resistencia = resistencia;
 	}
 	
 	/**
@@ -87,6 +96,30 @@ public class Jogador {
 	 * levando em consideração entrosamento, fadiga e moral do jogador.
 	 */
 	public void calcularCFH(){
+		int fh = 0;
+		switch (posicao) {
+		case 0:
+			fh = (agilidade+forca+resistencia)/3;
+			break;
+		case 1:
+			fh = (agilidade+forca*3+resistencia*2)/6;
+			break;
+		case 2:
+			fh = (agilidade*2+forca+resistencia*3)/6;
+			break;
+		case 3:
+			fh = (agilidade+forca*2+resistencia*2)/5;
+			break;
+		case 4:
+			fh = (agilidade*2+forca*2+resistencia)/5;
+			break;
+		case 5:
+			fh = (agilidade*3+forca+resistencia)/5;
+			break;
+		case 6:
+			fh = (agilidade*3+forca*2+resistencia)/6;
+			break;
+		}
 		int fadigaCalc = (fh*(fadiga+(100-fadiga)/2)/100);
 		
 		int moralCalc = fh;
@@ -109,6 +142,27 @@ public class Jogador {
 		
 		cfh = (fadigaCalc+moralCalc+entrosamentoCalc)/3;
 	}
+	
+//	TODO
+//	/**
+//	 * Calcula fadiga do jogador, levando a intensidade da atividade realizada
+//	 * 0 ficou em casa, 1 banco, 2 baixa, 3 moderada, 4 alta, 5 exaustiva
+//	 * 
+//	 * @return nome
+//	 */
+//	public void calcFadiga(int intensidade){
+//		/* Não jogou  */
+//		if(intensidade <= 1){
+//			fadiga += (intensidade+1)*10;
+//			if(fadiga > 100)
+//				fadiga = 100;
+//			
+//			return;
+//		}
+//		
+//		/* Este infeliz jogou */
+//		fadiga -= intensidade*6;
+//	}
 
 	/**
 	 * Converte classe para uma string que a identifique, no caso o nome do jogador

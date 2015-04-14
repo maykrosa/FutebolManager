@@ -111,8 +111,9 @@ public class Campeonato extends GenericoCompeticao {
 		
 		System.out.println();
 		for (int i = 0; i < NUMERO_DE_PARTICIPANTES; i++) {
-			System.out.println(times.get(i).nome + " = " + times.get(i).dadosCompeticoes.get(getID()).pontos+" "+
-					times.get(i).dadosCompeticoes.get(getID()).golsPro+" "+times.get(i).dadosCompeticoes.get(getID()).golsContra);
+			System.out.println(times.get(i).nome + " " + times.get(i).dadosCompeticoes.get(getID()).pontos+" "+
+					times.get(i).dadosCompeticoes.get(getID()).golsPro+" "+times.get(i).dadosCompeticoes.get(getID()).golsContra+
+					" "+times.get(i).dadosCompeticoes.get(getID()).cartoesAmarelo+" "+times.get(i).dadosCompeticoes.get(getID()).cartoesVermelho);
 			times.get(i).nivel = (NUMERO_DE_PARTICIPANTES*serie)+i;
 		}
 		

@@ -33,7 +33,10 @@ public class FutebolManager {
 		
 		Confederacao c = new Confederacao(times);
 		// 52 semanas, mas com os jogos de meio de semana da 104
-
+		for (Time t : times) {
+			t.comecarTemporada();
+		}
+		
 		c.comecarTemporada();
 		for (int i = 0; i < 100; i++) {
 			for (Time t : times) {
@@ -42,6 +45,8 @@ public class FutebolManager {
 						t.calendario.realizarJogo(i);
 					}
 				}
+				
+				t.atualiza();
 			}
 			c.atualizar(i);
 		}
